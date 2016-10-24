@@ -13,7 +13,6 @@ require 'net/http'
 require 'net/https'
 require 'uri'
 require 'json'
-require 'dotenv'
 
 module TestRail
   class APIClient
@@ -42,7 +41,7 @@ module TestRail
     # uri                 The API method to call including parameters
     #                     (e.g. get_case/1)
     #
-    def send_get(uri)
+    def get(uri)
       _send_request('GET', uri, nil)
     end
 
@@ -59,12 +58,13 @@ module TestRail
     # data                The data to submit as part of the request (as
     #                     Ruby hash, strings must be UTF-8 encoded)
     #
-    def send_post(uri, data)
+    def post(uri, data)
       _send_request('POST', uri, data)
     end
 
     private
     def _send_request(method, uri, data)
+      puts "**** TR Reuqest URL: #{@url + uri}"
       url = URI.parse(@url + uri)
       if method == 'POST'
         request = Net::HTTP::Post.new(url.path + '?' + url.query)

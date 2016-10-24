@@ -9,10 +9,12 @@
 /test/tmp/
 /test/version_tmp/
 /tmp/
+.DS_Store
 
 # Used by dotenv library to load environment variables.
 .env
 .idea/
+logical_test_cases/
 
 ## Specific to RubyMotion:
 .dat*
