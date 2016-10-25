@@ -41,8 +41,9 @@ class TRUploader
       if row[5].nil?
         #check that there isn't already a section matching the title row[0]
         if get_title_id(row[0], @parent_id).nil? #duplicate check
+          @sections.push(@client.post("add_section/#{ENV['TRPID']}", build_new_ltc(row, @parent_id)))
           #build the request and save id
-          row[4] = url(@client.post("add_section/#{ENV['TRPID']}", build_new_ltc(row, @parent_id))["id"])
+          row[4] = url(@sections.last["id"])
           sleep 1
         else
           row[4] = url(get_title_id(row[0], @parent_id))
@@ -51,7 +52,8 @@ class TRUploader
         # build hierarchy for sub-section
         parent_id = build_heirarchy(row[5], @parent_id)
         if get_title_id(row[0], parent_id).nil?
-          row[4] = url(@client.post("add_section/#{ENV['TRPID']}", build_new_ltc(row, parent_id))["id"])
+          @sections.push(@client.post("add_section/#{ENV['TRPID']}", build_new_ltc(row, parent_id)))
+          row[4] = url(@sections.last["id"])
           sleep 1
         else
           row[4] = url(get_title_id(row[0], parent_id))
@@ -110,11 +112,11 @@ class TRUploader
 
   def write_out_updated_csv
     CSV.open(CSVS + "uploaded_#{@csv_file}", "wb") do |csv|
-      csv << @csv_head
+      csv << ["url"]
     end
     CSV.open(CSVS + "uploaded_#{@csv_file}", "a") do |csv|
       @csv.each do |row|
-        csv << row
+        csv << [row[4]]
       end
     end
   end
