@@ -12,7 +12,7 @@ class TRUploader
     Dotenv.load ".env"
     @date = set_datetime
     @csv_file = argv[0]
-    @parent_id = 305912
+    @parent_id = argv[1].to_i
     #puts "Args #{argv[0]}, #{argv[1]}"
     @client = TestRail::APIClient.new(ENV['TRURL'])
     @client.user = ENV['TRUSER']
