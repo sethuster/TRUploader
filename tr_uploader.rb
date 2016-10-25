@@ -11,6 +11,7 @@ class TRUploader
   def initialize(argv)
     Dotenv.load ".env"
     @csv_file = argv[0]
+    @parent_id = 304265
     #puts "Args #{argv[0]}, #{argv[1]}"
     @client = TestRail::APIClient.new(ENV['TRURL'])
     @client.user = ENV['TRUSER']
@@ -33,19 +34,20 @@ class TRUploader
       #does sub-section exist in csv = csv[5].nil?
       if row[5].nil?
         #check that there isn't already a section matching the title row[0]
-        if get_title_id(row[0]).nil?
+        if get_title_id(row[0], @parent_id).nil?
           #build the request and save id
-          row[4] = @client.post("add_section/#{ENV['TRPID']}", build_new_ltc(row, 304260))
+          row[4] = @client.post("add_section/#{ENV['TRPID']}", build_new_ltc(row, @parent_id))
         end
+      else
+        # build hierarchy for sub-section
+        parent_id = build_heirarchy(row[5])
+        row[4] = @client.post("add_section/#{ENV['TRPID']}", build_new_ltc(row, parent_id))
       end
     end
-
-    #if so - does sub-section exist in TR?
-    # if exists - create new LTC with description
   end
 
-  def get_title_id(title)
-    parent = @sections.select {|hash| hash["parent_id"] == ENV['TRPID']}
+  def get_title_id(title, parent_id)
+    parent = @sections.select {|hash| hash["parent_id"] == parent_id}
     exists = parent.select {|hash| hash["name"] == title}
     if exists.count > 0
       exists.first["id"]
@@ -67,6 +69,11 @@ class TRUploader
     # this must return a hash
     new_desctription = "Created on: #{row[2]}\nCreated by:#{row[3]}\nDescription:#{row[2]}\nUploaded via SethScript #{DateTime.now.month}.#{DateTime.now.day}.#{DateTime.now.year}"
     {:name => row[0], :description => new_desctription, :parent_id => parent_id}
+  end
+
+  def build_heirarchy(row)
+    #split this row into sub sections
+    #TODO this
   end
 
 end
