@@ -64,7 +64,7 @@ module TestRail
 
     private
     def _send_request(method, uri, data)
-      puts "**** TR Reuqest URL: #{@url + uri}"
+      puts "**** TR Reuqest URL: #{@url + uri} data: #{data}"
       url = URI.parse(@url + uri)
       if method == 'POST'
         request = Net::HTTP::Post.new(url.path + '?' + url.query)
@@ -89,6 +89,7 @@ module TestRail
       end
 
       if response.code != '200'
+        puts "#{response['Retry-After']}"
         if result && result.key?('error')
           error = '"' + result['error'] + '"'
         else
