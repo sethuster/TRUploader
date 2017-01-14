@@ -64,7 +64,7 @@ class TRUploader
   end
 
   def url(id)
-    "https://sendgrid.testrail.net/index.php?/suites/view/71&group_by=cases:section_id&group_order=asc&group_id=#{id}"
+    "https://#{ENV['TRURL']}/index.php?/suites/view/71&group_by=cases:section_id&group_order=asc&group_id=#{id}"
   end
 
   def get_title_id(title, parent_id)

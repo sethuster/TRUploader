@@ -16,6 +16,7 @@
 .env
 .idea/
 logical_test_cases/
+sorted/
 
 ## Specific to RubyMotion:
 .dat*
